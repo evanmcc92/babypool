@@ -1,0 +1,7 @@
+<h1>Submit a Bet</h1>
+
+<% if Date.today < @baby.end_date %>
+    <%= render 'form', pool: @pool %>
+<% else %>
+    <p>This pool is closed.</p>
+<% end %>

@@ -1,0 +1,63 @@
+<%= form_with(model: baby, local: true) do |form| %>
+  <% if baby.errors.any? %>
+    <div class="row">
+      <div class="col">
+        <div class="alert alert-alert alert-dismissible fade show" role="alert">
+          <h2><%= pluralize(baby.errors.count, "error") %> prohibited this pool from being saved:</h2>
+
+          <ul>
+            <% baby.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :gender %>
+    <%= form.select :gender, ['It\'s a Surprise', 'Boy', 'Girl'], {include_blank: 'Select a Gender'}, {class: "form-control", required: true} %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :due_date, 'Due Date' %>
+    <%= form.date_field :due_date, value: Date.today, class: "form-control", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :end_date, 'End Date' %>
+    <%= form.date_field :end_date, value: Date.today - 1.months, class: "form-control", required: true %>
+    <small class="form-text text-muted">It is recommended to have this be a month from the due date.</small>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :description %>
+    <%= form.text_area :description, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :payment_link, "Payment Link" %>
+    <%= form.url_field :payment_link, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :registry_link, "Registry Link" %>
+    <%= form.url_field :registry_link, class: "form-control" %>
+  </div>
+
+  <%= form.hidden_field :admin_id, value: current_admin.id %>
+  <%= form.hidden_field :is_born, value: true %>
+
+  <div class="actions">
+    <%= form.submit "Submit", class: "btn btn-success" %>
+  </div>
+<% end %>

@@ -1,0 +1,168 @@
+<% if @baby.is_born %>
+    <div class="row">
+        <div class="alert alert-info" role="alert">
+            <p>🎉 🎊 The baby was born! <%= @baby.baby_name %> was born <%= @baby.birth_date.strftime("%B %d %Y") %> at <%= @baby.birth_time.strftime("%l:%M %p") %> weighing <%= ozToLbs(@baby.weight) %> with a length of <%= @baby.length.to_f %> inches! 🎊 🎉</p>
+        </div>
+    </div>
+<% end %>
+
+<div class="row">
+    <h1><%= @baby.title %></h1>
+</div>
+
+<% if current_admin && current_admin.id === @baby.admin_id %>
+    <div class="row">
+        <div class="col">
+            <nav class="nav nav-pills nav-fill justify-content-center">
+                <%= link_to 'Edit Baby Pool', edit_baby_path(@baby), class: "nav-link" %>
+                <%= link_to 'Baby Was Born', baby_born_path(@baby), class: "nav-link" %>
+            </nav>
+        </div>
+    </div>
+<% end %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <p  style='white-space:pre-wrap'><%= @baby.description %></p>
+        </div>
+        <div class="col-sm-4">
+            <h2>Total Bets</h2>
+            <p><%= @pools.count %></p>
+            <% if isPresent(@baby.payment_link) || isPresent(@baby.registry_link) %>
+                <h2>Links</h2>
+                <% if isPresent(@baby.payment_link) %><p><%= link_to "Pay Here", @baby.payment_link, class: "btn btn-success" %></p><% end %>
+                <% if isPresent(@baby.registry_link) %><p><%= link_to "View Registry", @baby.registry_link, class: "btn btn-secondary" %></p><% end %>
+            <% end %>
+        </div>
+    </div>
+
+    <% if !@baby.is_born %>
+        <% if Date.today < @baby.end_date %>
+            <div class="row">
+                <div class="col">
+                    <p><%= link_to 'Submit a Bet', new_pool_path(@baby.id), class: "btn btn-primary btn-lg btn-block" %></p>
+                </div>
+            </div>
+        <% end %>
+    <% end %>
+</div>
+
+<% if @pools.count > 0 %>
+    <div class="container">
+        <div class="row">
+            <h2>Latest Stats</h2>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h3>Gender</h3>
+                <% if @baby.is_born %><p><b>Correct Gender</b><br><%= @baby.gender %></p><% end %>
+                <%= bar_chart @pools.group(:gender).count, library: {
+                    scales: {
+                        xAxes: [
+                            {
+                                ticks: {
+                                    display: false
+                                },
+                                gridLines: {
+                                    display: false
+                                }
+                            }
+                        ]
+                    }
+                } %>
+            </div>
+            <div class="col-sm">
+                <h3>Birth Date</h3>
+                <% if @baby.is_born %><p><b>Correct Birth Date</b><br><%= @baby.birth_date.strftime("%B %d %Y") %></p><% end %>
+                <p><b>Due Date</b><br><%= @baby.due_date.strftime("%B %d %Y") %></p>
+                <p><b>Latest Date</b><br><%= @dates.max.strftime("%B %d %Y") %></p>
+                <p><b>Earliest Date</b><br><%= @dates.min.strftime("%B %d %Y") %></p>
+            </div>
+            <% if @times.count > 0 %>
+                <div class="col-sm">
+                    <h3>Birth Time</h3>
+                    <% if @baby.is_born %><p><b>Correct Birth Time</b><br><%= @baby.birth_time.strftime("%l:%M %p") %></p><% end %>
+                    <p><b>Latest Time</b><br><%= @times.max.strftime("%l:%M %p") %></p>
+                    <p><b>Earliest Time</b><br><%= @times.min.strftime("%l:%M %p") %></p>
+                </div>
+            <% end %>
+            <% if isPresent(@lengthAverage) || isPresent(@weightAverage) %>
+                <div class="col-sm">
+                    <h3>Size</h3>
+                    <% if @baby.is_born %><p><b>Correct Length</b><br><%= @baby.length.to_f.round(2) %> lbs</p><% end %>
+                    <% if isPresent(@lengthAverage) %><p><b>Average Length</b><br><%= @lengthAverage.to_f.round(2) %> lbs</p><% end %>
+                    <% if @baby.is_born %><p><b>Correct Weight</b><br><%= ozToLbs(@baby.weight) %></p><% end %>
+                    <% if isPresent(@weightAverage) %><p><b>Average Weight</b><br><%= ozToLbs(@weightAverage) %></p><% end %>
+                </div>
+            <% end %>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <h2>All Bets</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Title</th>
+                          <th>Gender</th>
+                          <th>Birth Date</th>
+                          <th>Birth Time</th>
+                          <th>Length</th>
+                          <th>Weight</th>
+                        <% if @baby.is_born %>
+                          <th>Score</th>
+                        <% end %>
+                        <% if current_admin && current_admin.id === @baby.admin_id %>
+                          <th>Paid</th>
+                          <th>Did Pay</th>
+                          <th>Remove</th>
+                        <% end %>
+
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <% @pools.each do |pool| %>
+                          <tr>
+                            <td><%= pool.name %></td>
+                            <td><%= pool.gender %></td>
+                            <td><%= pool.birth_date.strftime("%B %d %Y") %></td>
+                            <td><% if pool.birth_time %><%= pool.birth_time.strftime("%l:%M %p") %><% else %><% end %></td>
+                            <td><% if pool.length %><%= pool.length.to_f %> inches<% else %><% end %></td>
+                            <td><% if pool.weight %><%= ozToLbs(pool.weight) %><% else %><% end %></td>
+                        <% if @baby.is_born %>
+                            <td><%= pool.score %></td>
+                        <% end %>
+                            <% if current_admin && current_admin.id === @baby.admin_id %>
+                                <td><%= pool.paid ? 'Yes' : 'No' %></td>
+                                <% if !pool.paid %>
+                                    <%= form_for(pool, html: {id: "pool_#{pool.id}"}) do |form| %>
+                                        <%= form.hidden_field :paid, value: true %>
+                                        <td><%= form.submit "Paid", class: "btn btn-outline-primary" %></td>
+                                    <% end %>
+                                <% else %>
+                                    <td></td>
+                                <% end %>
+                                <%= form_for(pool, method: :delete, data: { confirm: 'Are you sure?' }, html: {id: "pool_#{pool.id}"}) do |form| %>
+                                    <td>
+                                        <%= button_tag type: 'submit', class: "btn btn-outline-danger" do %>
+                                            <%= octicon "trash", :"aria-label" => "Remove pool" %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+                            <% end %>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

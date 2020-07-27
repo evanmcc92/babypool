@@ -1,0 +1,84 @@
+<%= form_with(model: pool, local: true) do |form| %>
+  <% if pool.errors.any? %>
+    <div class="row">
+      <div class="col">
+        <div class="alert alert-alert alert-dismissible fade show" role="alert">
+          <h2><%= pluralize(pool.errors.count, "error") %> prohibited this bet from being saved:</h2>
+
+          <ul>
+            <% pool.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+    <div class="form-group">
+        <%= form.label :name, 'Your Name' %>
+        <%= form.text_field :name, required: true, class: "form-control" %>
+    </div>
+    <div class="form-group">
+        <%= form.label :email, 'Your Email' %>
+        <%= form.text_field :email, class: "form-control" %>
+    </div>
+    <div class="form-group">
+        <% if @baby.gender != "It's a Surprise" %>
+            <%= form.hidden_field :gender, value: @baby.gender %>
+        <% else %>
+            <%= form.label :gender %>
+            <%= form.select :gender, ['Boy', 'Girl'], {include_blank: 'Select a Gender', selected: @baby.gender}, {class: "form-control", required: true} %>
+            <small class="form-text text-muted">There is a <a href="https://www.thebump.com/a/more-baby-boys-than-girls">51%</a> chance that the gender will be a boy.</small>
+        <% end %>
+    </div>
+    <div class="form-group">
+        <label for="birthDay">Birth Day</label>
+        <%= form.label :birth_date, "Birth Day" %>
+        <%= form.date_field :birth_date, class: "form-control", value: @baby.due_date, max: @baby.due_date + 1.month, min: @baby.due_date - 1.month, required: true %>
+        <small class="form-text text-muted">The due date is <%= @baby.due_date.strftime("%B %d %Y") %>.</small>
+    </div>
+    <div class="form-group">
+        <%= form.label :birth_time %>
+        <%= form.time_field :birth_time, class: "form-control" %>
+    </div>
+    <div class="form-group">
+        <%= form.label :length %>
+        <div class="input-group mb-2">
+            <%= form.number_field :length, class: "form-control", value: "20", max: "30", min: "3", step: "0.1" %>
+            <div class="input-group-prepend">
+                <div class="input-group-text">inches</div>
+            </div>
+        </div>
+        <small class="form-text text-muted">The average length of a newborn is 20 inches.</small>
+    </div>
+    <div class="form-group">
+        <%= form.label :weight %>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-2">
+                    <%= form.number_field :weight_lbs, class: "form-control", value: "7", max: "15", min: "3" %>
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">lbs</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-2">
+                    <%= form.number_field :weight_oz, class: "form-control", value: "8", max: "15", min: "0" %>
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">oz</div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        <small class="form-text text-muted">The average weight of a newborn is 7 lbs 8 oz.</small>
+    </div>
+    <%= form.hidden_field :baby_id, value: @baby.id %>
+    <%= form.hidden_field :admin_id, value: @baby.admin_id %>
+    <div class="form-group">
+        <%= form.submit "Submit", class: "btn btn-success" %>
+    </div>
+<% end %>
