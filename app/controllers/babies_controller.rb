@@ -1,11 +1,12 @@
 class BabiesController < ApplicationController
-  before_action :set_baby, only: [:show, :edit, :update, :destroy]
+  before_action :set_baby, only: [:show, :edit, :update, :destroy, :born, :born_post]
   helper_method :isPresent
 
   # GET /babies
   # GET /babies.json
   def index
-    @babies = Baby.where(admin_id: current_admin.id)
+    @babies = Baby.where(admin_id: current_admin.id, is_born: false)
+    @completed_babies = Baby.where(admin_id: current_admin.id, is_born: true)
   end
 
   # GET /babies/1
@@ -44,6 +45,11 @@ class BabiesController < ApplicationController
       if isPresent(p.birth_time)
         @times << p.birth_time
       end
+    end
+
+    if @baby.is_born
+      @winner = getBabyWinner(@baby.id)
+      @pools = @pools.sort_by { |k| k.score}.reverse
     end
 
     if lengthCount > 0
@@ -104,27 +110,34 @@ class BabiesController < ApplicationController
     end
   end
 
-  def baby_born
-    @baby = Baby.find(params[:format])
-
+  # GET /baby/born/1
+  # GET /baby/born/1.json
+  def born
     weight = ozToLbs(@baby.weight).split(' ')
     @weight_oz = weight[2]
     @weight_lbs = weight[0]
   end
 
-  def baby_born_action
+
+  # POST /baby/born/1
+  # POST /baby/born/1.json
+  def born_post
     if params[:baby][:weight_lbs] && params[:baby][:weight_oz]
       @baby.weight = (params[:baby][:weight_lbs].to_i * 16) + params[:baby][:weight_oz].to_i
     end
     respond_to do |format|
-
       if @baby.update(baby_params)
         @pools = Pool.where(baby_id: @baby.id)
-    @pools.each do |p|
-    end
+        pool_winner = {points: 0, pool: 0}
+        @pools.each do |p|
+          points = p.updateAfterBabyBorn(@baby)
+          if points > pool_winner[:points]
+            pool_winner[:points] = points
+            pool_winner[:pool] = p
+          end
+        end
 
-
-
+        pool_winner[:pool].setWinner
 
         format.html { redirect_to @baby, notice: 'Baby pool was successfully updated.' }
         format.json { render :show, status: :ok, location: @baby }
@@ -142,6 +155,7 @@ class BabiesController < ApplicationController
 
     return false
   end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.

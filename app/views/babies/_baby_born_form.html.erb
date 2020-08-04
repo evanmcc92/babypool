@@ -1,4 +1,4 @@
-<%= form_with(model: baby, local: true) do |form| %>
+<%= form_with(model: baby, url: born_baby_path(id: baby), method: 'post', local: true) do |form| %>
   <% if baby.errors.any? %>
     <div class="row">
       <div class="col">

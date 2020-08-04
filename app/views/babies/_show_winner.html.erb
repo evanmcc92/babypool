@@ -1,0 +1,158 @@
+
+
+<div class="row">
+    <h1><%= @baby.title %></h1>
+</div>
+
+<div class="row">
+    <div class="container">
+        <div class="alert alert-info" role="alert" style="text-align: center;">
+            <p>🎉 🎊 The baby was born! <%= @baby.baby_name %> was born <%= @baby.birth_date.strftime("%B %d %Y") %> at <%= @baby.birth_time.strftime("%l:%M %p") %> weighing <%= ozToLbs(@baby.weight) %> with a length of <%= @baby.length.to_f %> inches! 🎊 🎉</p>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <h2>Congratulations to <%= @winner.name %></h2>
+        </div>
+        <div class="row">
+            <h3><%= @winner.name %> Guessed:</h3>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h3>Gender</h3>
+                <p><%= @winner.gender %></p>
+            </div>
+            <div class="col-sm">
+                <h3>Birth Date</h3>
+                <p><%= @winner.birth_date.strftime("%B %d %Y") %></p>
+                <p>Off By <%= distance_of_time_in_words(@winner.birth_date, @baby.birth_date) %></p>
+            </div>
+            <% if @times.count > 0 %>
+                <div class="col-sm">
+                    <h3>Birth Time</h3>
+                    <p><%= @winner.birth_time.strftime("%l:%M %p") %></p>
+                    <p>Off By <%= distance_of_time_in_words(@winner.birth_time, @baby.birth_time) %></p>
+                </div>
+            <% end %>
+            <% if isPresent(@lengthAverage) %>
+                <div class="col-sm">
+                    <h3>Length</h3>
+                    <p><%= @winner.length.to_f.round(2) %> lbs</p>
+                    <p>Off By <%= (@winner.length.to_f - @baby.length.to_f).abs.round(2) %> lbs</p>
+                </div>
+            <% end %>
+            <% if isPresent(@weightAverage) %>
+                <div class="col-sm">
+                    <h3>Weight</h3>
+                    <p><%= ozToLbs(@winner.weight) %></p>
+                    <p>Off By <%= ozToLbs((@winner.weight - @baby.weight).abs) %></p>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <h2>Official Stats</h2>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h3>Gender</h3>
+                <% if @baby.is_born %><p><b>Correct Gender</b><br><%= @baby.gender %></p><% end %>
+                
+            </div>
+            <div class="col-sm">
+                <h3>Birth Date</h3>
+                <p><b>Correct Birth Date</b><br><%= @baby.birth_date.strftime("%B %d %Y") %></p>
+            </div>
+            <% if @times.count > 0 %>
+                <div class="col-sm">
+                    <h3>Birth Time</h3>
+                    <p><b>Correct Birth Time</b><br><%= @baby.birth_time.strftime("%l:%M %p") %></p>
+                </div>
+            <% end %>
+            <% if isPresent(@lengthAverage) %>
+                <div class="col-sm">
+                    <h3>Length</h3>
+                    <p><b>Correct Length</b><br><%= @baby.length.to_f.round(2) %> lbs</p>
+                </div>
+            <% end %>
+            <% if isPresent(@weightAverage) %>
+                <div class="col-sm">
+                    <h3>Weight</h3>
+                    <p><b>Correct Weight</b><br><%= ozToLbs(@baby.weight) %></p>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>
+
+<% if @pools.count > 0 %>
+    <div class="container">
+        <div class="row">
+            <h2>All Bets</h2>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Gambler</th>
+                          <th>Gender</th>
+                          <th>Birth Date</th>
+                          <th>Birth Time</th>
+                          <th>Length</th>
+                          <th>Weight</th>
+                          <th>Score</th>
+                        <% if current_admin && current_admin.id === @baby.admin_id %>
+                          <th>Paid</th>
+                          <th>Did Pay</th>
+                          <th>Remove</th>
+                        <% end %>
+
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <% @pools.each do |pool| %>
+                          <tr>
+                            <td><% if pool.winner %>🎉 <% end %><%= pool.name %></td>
+                            <td><%= pool.gender %></td>
+                            <td><%= pool.birth_date.strftime("%B %d %Y") %></td>
+                            <td><% if pool.birth_time %><%= pool.birth_time.strftime("%l:%M %p") %><% else %><% end %></td>
+                            <td><% if pool.length %><%= pool.length.to_f %> inches<% else %><% end %></td>
+                            <td><% if pool.weight %><%= ozToLbs(pool.weight) %><% else %><% end %></td>
+                            <td><%= pool.score %></td>
+                            <% if current_admin && current_admin.id === @baby.admin_id %>
+                                <td><%= pool.paid ? 'Yes' : 'No' %></td>
+                                <% if !pool.paid %>
+                                    <%= form_for(pool, url: baby_pool_path(baby_id: @baby.id, id: pool.id), html: {id: "pool_#{pool.id}"}) do |form| %>
+                                        <%= form.hidden_field :paid, value: true %>
+                                        <td><%= form.submit "Paid", class: "btn btn-outline-primary" %></td>
+                                    <% end %>
+                                <% else %>
+                                    <td></td>
+                                <% end %>
+                                <%= form_for(pool, url: baby_pool_path(baby_id: @baby.id, id: pool.id),  method: :delete, data: { confirm: 'Are you sure?' }, html: {id: "pool_#{pool.id}"}) do |form| %>
+                                    <td>
+                                        <%= button_tag type: 'submit', class: "btn btn-outline-danger" do %>
+                                            <%= octicon "trash", :"aria-label" => "Remove pool" %>
+                                        <% end %>
+                                    </td>
+                                <% end %>
+                            <% end %>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<% end %>

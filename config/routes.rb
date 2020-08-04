@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
-  resources :pools
-  resources :babies
-  get 'baby/born' => 'babies#baby_born'
+  resources :babies do
+    member do
+      get 'born'
+      post 'born', to: 'babies#born_post'
+    end
+      resources :pools
+  end
   devise_for :admins
   get 'index/index'
  

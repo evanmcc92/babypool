@@ -3,7 +3,7 @@ class PoolsController < ApplicationController
 
   # GET /pools/new
   def new
-    @baby = Baby.find(params[:format])
+    @baby = Baby.find(params[:baby_id])
     @pool = Pool.new
   end
 

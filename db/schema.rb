@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_27_203418) do
+ActiveRecord::Schema.define(version: 2020_08_04_215026) do
 
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -59,6 +59,10 @@ ActiveRecord::Schema.define(version: 2020_07_27_203418) do
     t.boolean "paid"
     t.integer "score"
     t.boolean "winner"
+    t.integer "birth_date_points"
+    t.integer "birth_time_points"
+    t.integer "birth_weight_points"
+    t.integer "birth_length_points"
     t.index ["admin_id"], name: "index_pools_on_admin_id"
     t.index ["baby_id"], name: "index_pools_on_baby_id"
   end
