@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2020_08_04_215026) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -28,7 +31,7 @@ ActiveRecord::Schema.define(version: 2020_08_04_215026) do
     t.string "title"
     t.date "due_date"
     t.text "description"
-    t.integer "admin_id", null: false
+    t.bigint "admin_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.date "end_date"
@@ -52,8 +55,8 @@ ActiveRecord::Schema.define(version: 2020_08_04_215026) do
     t.time "birth_time"
     t.float "length"
     t.float "weight"
-    t.integer "admin_id", null: false
-    t.integer "baby_id", null: false
+    t.bigint "admin_id", null: false
+    t.bigint "baby_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "paid"
