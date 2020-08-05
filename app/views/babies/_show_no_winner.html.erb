@@ -17,6 +17,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-8">
+                <p><b>Due Date:</b> <%= @baby.due_date.strftime("%B %d %Y") %></p>
                 <p  style='white-space:pre-wrap'><%= @baby.description %></p>
             </div>
             <div class="col-sm-4">
@@ -65,7 +66,6 @@
             <div class="row">
                 <div class="col-sm">
                     <h3>Birth Date</h3>
-                    <p><b>Due Date</b><br><%= @baby.due_date.strftime("%B %d %Y") %></p>
                     <p><b>Latest Date</b><br><%= @dates.max.strftime("%B %d %Y") %></p>
                     <p><b>Earliest Date</b><br><%= @dates.min.strftime("%B %d %Y") %></p>
                 </div>

@@ -3,46 +3,48 @@
 </div>
 
 <% if @babies.count > 0 %>
-<div class="row">
   <div class="row">
-    <h2>Open Baby Pools</h2>
-  </div>
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="text-align: center;">Pool</th>
-          <th style="text-align: center;">Due Date</th>
-          <th style="text-align: center;">End Date</th>
-          <th style="text-align: center;">Baby Was Born</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <% @babies.each do |baby| %>
+    <div class="row">
+      <h2>Open Baby Pools</h2>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
           <tr>
-            <td style="text-align: center;"><%= link_to baby.title, baby_path(baby) %></td>
-            <td style="text-align: center;"><%= baby.due_date.strftime("%B %d %Y") %></td>
-            <td style="text-align: center;"><%= baby.end_date.strftime("%B %d %Y") %></td>
-            <td style="text-align: center;"><%= link_to '👶', born_baby_path(baby), class: "nav-link" %></td>
-            <td style="text-align: center;">
-              <%= link_to edit_baby_path(baby) do%>
-                <%= octicon "pencil", :"aria-label" => "Edit pool" %>
-              <% end %>
-            </td>
-            <td style="text-align: center;">
-              <%= link_to baby_path(baby), method: 'delete' do%>
-                <%= octicon "trash", :"aria-label" => "Remove pool" %>
-              <% end %>
-            </td>
+            <th style="text-align: center;">Pool</th>
+            <th style="text-align: center;">Due Date</th>
+            <th style="text-align: center;">End Date</th>
+            <th style="text-align: center;">Baby Was Born</th>
+            <th></th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          <% @babies.each do |baby| %>
+            <tr>
+              <td style="text-align: center;"><%= link_to baby.title, baby_path(baby) %></td>
+              <td style="text-align: center;"><%= baby.due_date.strftime("%B %d %Y") %></td>
+              <td style="text-align: center;"><%= baby.end_date.strftime("%B %d %Y") %></td>
+              <td style="text-align: center;"><%= link_to '👶', born_baby_path(baby), class: "nav-link" %></td>
+              <td style="text-align: center;">
+                <%= link_to edit_baby_path(baby) do%>
+                  <%= octicon "pencil", :"aria-label" => "Edit pool" %>
+                <% end %>
+              </td>
+              <td style="text-align: center;">
+                <%= link_to baby_path(baby), method: 'delete' do%>
+                  <%= octicon "trash", :"aria-label" => "Remove pool" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+<% else %>
+  <p><%= link_to "Create a New Pool", new_baby_path(current_admin) %></p>
 <% end %>
 
 
