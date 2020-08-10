@@ -19,11 +19,11 @@
   <% end %>
     <div class="form-group">
         <%= form.label :name, 'Your Name' %>
-        <%= form.text_field :name, required: true, class: "form-control" %>
+        <%= form.text_field :name, required: true, value: (current_admin.name if current_admin), class: "form-control" %>
     </div>
     <div class="form-group">
         <%= form.label :email, 'Your Email' %>
-        <%= form.text_field :email, class: "form-control" %>
+        <%= form.text_field :email, value: (current_admin.email if current_admin), class: "form-control" %>
     </div>
     <div class="form-group">
         <% if @baby.gender != "It's a Surprise" %>
