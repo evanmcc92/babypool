@@ -55,5 +55,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 
 gem 'devise'
-gem "chartkick"
+gem 'chartkick'
 gem 'octicons_helper'
+gem 'social-share-button'

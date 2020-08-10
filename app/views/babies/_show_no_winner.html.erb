@@ -21,13 +21,14 @@
                 <p  style='white-space:pre-wrap'><%= @baby.description %></p>
             </div>
             <div class="col-sm-4">
-                <h2>Total Bets</h2>
-                <p><%= @pools.count %></p>
-                <% if isPresent(@baby.payment_link) || isPresent(@baby.registry_link) %>
+                    <h2>Total Bets</h2>
+                    <p><%= @pools.count %></p>
                     <h2>Links</h2>
-                    <% if isPresent(@baby.payment_link) %><p><%= link_to "Pay Here", @baby.payment_link, class: "btn btn-success" %></p><% end %>
-                    <% if isPresent(@baby.registry_link) %><p><%= link_to "View Registry", @baby.registry_link, class: "btn btn-secondary" %></p><% end %>
-                <% end %>
+                    <p><%= social_share_button_tag("Baby Betting Pool: #{@baby.title}", desc: @baby.description) %></p>
+                    <% if isPresent(@baby.payment_link) || isPresent(@baby.registry_link) %>
+                        <% if isPresent(@baby.payment_link) %><p><%= link_to "Pay Here", @baby.payment_link, class: "btn btn-success" %></p><% end %>
+                        <% if isPresent(@baby.registry_link) %><p><%= link_to "View Registry", @baby.registry_link, class: "btn btn-secondary" %></p><% end %>
+                    <% end %>
             </div>
         </div>
 
