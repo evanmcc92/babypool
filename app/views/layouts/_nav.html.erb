@@ -5,13 +5,16 @@
   </button>
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
         <% if current_admin %>
           <li class="nav-item">
                 <%= link_to "My Pools", babies_path, class: 'nav-link' %>
           </li>
           <li class="nav-item">
                 <%= link_to "Create a Pool", new_baby_path(current_admin), class: 'nav-link' %>
+          </li>
+          <li class="nav-item">
+                <%= link_to "Edit My Account", edit_admin_registration_path(current_admin), class: 'nav-link' %>
           </li>
           <li class="nav-item">
                 <%= link_to "Logout", destroy_admin_session_path, method: 'delete',  class: 'nav-link' %>
