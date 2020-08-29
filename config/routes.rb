@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   end
   devise_for :admins
   get 'index/index'
+  get 'index/score', as: 'score'
+  get 'index/privacy_policy', as: 'privacy_policy'
  
   root 'index#index'
 end
