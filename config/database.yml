@@ -80,6 +80,4 @@ test:
 #
 production:
   <<: *default
-  database: babypool_production
-  username: babypool
-  password: <%= ENV['babypool_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
